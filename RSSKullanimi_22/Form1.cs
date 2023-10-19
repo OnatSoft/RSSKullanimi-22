@@ -17,31 +17,78 @@ namespace RSSKullanimi_22
         {
             InitializeComponent();
         }
+        //https://www.cumhuriyet.com.tr/rss
+        //http://www.hurriyet.com.tr/rss/gundem
 
-        private void btn_SozcuHaber_Click(object sender, EventArgs e)
+        string Title = "";
+        string Url = "";
+
+        private void haberLink(string url)
         {
-            XmlTextReader xmloku = new XmlTextReader("https://www.cumhuriyet.com.tr/rss");
-
-            while (xmloku.Read())
+            try
             {
-                if (xmloku.Name == "title")
+                XmlTextReader xmloku = new XmlTextReader(url);
+                dataGridView1.ColumnCount = 2;
+                dataGridView1.Columns[0].Name = "Başlık";
+                dataGridView1.Columns[1].Name = "Web Adresi";
+
+                while (xmloku.Read())
                 {
-                    listBox1.Items.Add(xmloku.ReadString().ToString());
+
+                    if (xmloku.LocalName == "title")
+                    {
+                        xmloku.Read();
+                        Title = xmloku.Value;
+                    }
+                    else if (xmloku.LocalName == "link")
+                    {
+                        xmloku.Read();
+                        Url = xmloku.Value;
+                    }
+
+                    dataGridView1.Rows.Add(Title, Url);
+                    break;
                 }
+                xmloku.Close();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message.ToString(), "Haberi yükleme işleminde bir hata oldu.", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void haberGetir(string link)
+        {
+            try
+            {
+                XmlTextReader reader = new XmlTextReader(link);
+                listBox2.Items.Clear();
+                while (reader.Read())
+                {
+                    if (reader.LocalName == "title")
+                    {
+                        listBox2.Items.Add(reader.ReadString());
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message.ToString(), "Haber yüklenirken bir hata oldu.", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
         private void btn_MynetHaber_Click(object sender, EventArgs e)
         {
-            XmlTextReader xmloku2 = new XmlTextReader("https://www.mynet.com/haber/rss/sondakika");
+            string url;
+            url = textBox1.Text;
+            haberLink(url);
+        }
 
-            while (xmloku2.Read())
-            {
-                if (xmloku2.Name == "title")
-                {
-                    listBox2.Items.Add(xmloku2.ReadString());
-                }
-            }
+        private void button1_Click(object sender, EventArgs e)
+        {
+            string link;
+            link = textBox1.Text;
+            haberGetir(link);
         }
     }
 }
