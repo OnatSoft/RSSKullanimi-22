@@ -28,9 +28,8 @@ namespace RSSKullanimi_22
             try
             {
                 XmlTextReader xmloku = new XmlTextReader(url);
-                dataGridView1.ColumnCount = 2;
+                dataGridView1.ColumnCount = 1;
                 dataGridView1.Columns[0].Name = "Başlık";
-                dataGridView1.Columns[1].Name = "Web Adresi";
 
                 while (xmloku.Read())
                 {
@@ -40,13 +39,8 @@ namespace RSSKullanimi_22
                         xmloku.Read();
                         Title = xmloku.Value;
                     }
-                    else if (xmloku.LocalName == "link")
-                    {
-                        xmloku.Read();
-                        Url = xmloku.Value;
-                    }
 
-                    dataGridView1.Rows.Add(Title, Url);
+                    dataGridView1.Rows.Add(Title);
                     break;
                 }
                 xmloku.Close();
